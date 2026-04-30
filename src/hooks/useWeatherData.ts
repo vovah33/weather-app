@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { getWeatherScreenData } from '../api/weatherApi';
 import type { GeocodingLocation } from '../types/location';
 import type { WeatherScreenData } from '../types/weather';
@@ -11,35 +11,38 @@ export function useWeatherData() {
   const [isWeatherLoading, setIsWeatherLoading] = useState(false);
   const [weatherErrorMessage, setWeatherErrorMessage] = useState<string | null>(null);
 
-  function applyLoadedWeatherData(
-    location: GeocodingLocation,
-    nextWeatherData: WeatherScreenData,
-  ) {
-    setWeatherData(nextWeatherData);
-    setSelectedDayId(nextWeatherData.todayId);
-    setSelectedLocation(location);
-  }
+  const applyLoadedWeatherData = useCallback(
+    (location: GeocodingLocation, nextWeatherData: WeatherScreenData) => {
+      setWeatherData(nextWeatherData);
+      setSelectedDayId(nextWeatherData.todayId);
+      setSelectedLocation(location);
+    },
+    [],
+  );
 
-  async function loadWeatherByLocation(location: GeocodingLocation): Promise<boolean> {
-    setIsWeatherLoading(true);
-    setWeatherErrorMessage(null);
+  const loadWeatherByLocation = useCallback(
+    async (location: GeocodingLocation): Promise<boolean> => {
+      setIsWeatherLoading(true);
+      setWeatherErrorMessage(null);
 
-    try {
-      const nextWeatherData = await getWeatherScreenData(location);
-      applyLoadedWeatherData(location, nextWeatherData);
+      try {
+        const nextWeatherData = await getWeatherScreenData(location);
+        applyLoadedWeatherData(location, nextWeatherData);
 
-      return true;
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Failed to load weather data.';
+        return true;
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : 'Failed to load weather data.';
 
-      setWeatherErrorMessage(message);
+        setWeatherErrorMessage(message);
 
-      return false;
-    } finally {
-      setIsWeatherLoading(false);
-    }
-  }
+        return false;
+      } finally {
+        setIsWeatherLoading(false);
+      }
+    },
+    [applyLoadedWeatherData],
+  );
 
   return {
     weatherData,

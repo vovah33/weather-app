@@ -17,7 +17,7 @@ const DEFAULT_CITY = 'Vlaardingen';
 function App() {
   const [searchValue, setSearchValue] = useState(DEFAULT_CITY);
 
-  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [isSearchingLocation, setIsSearchingLocation] = useState(true);
   const [searchErrorMessage, setSearchErrorMessage] = useState<string | null>(null);
 
   const {
@@ -97,8 +97,51 @@ function App() {
   }
 
   useEffect(() => {
-    void loadWeatherByCity(DEFAULT_CITY);
-  }, []);
+    let isCancelled = false;
+
+    async function loadDefaultCity() {
+      try {
+        const locations = await searchLocations(DEFAULT_CITY);
+
+        if (isCancelled) {
+          return;
+        }
+
+        if (!locations.length) {
+          throw new Error('City not found.');
+        }
+
+        const primaryLocation = locations[0];
+        const wasLoaded = await loadWeatherByLocation(primaryLocation);
+
+        if (isCancelled || !wasLoaded) {
+          return;
+        }
+
+        setSearchValue(primaryLocation.name);
+        clearLocationSuggestions();
+      } catch (error) {
+        if (isCancelled) {
+          return;
+        }
+
+        const message =
+          error instanceof Error ? error.message : 'Failed to search locations.';
+
+        setSearchErrorMessage(message);
+      } finally {
+        if (!isCancelled) {
+          setIsSearchingLocation(false);
+        }
+      }
+    }
+
+    void loadDefaultCity();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [clearLocationSuggestions, loadWeatherByLocation]);
 
   const isLoading = isSearchingLocation || isWeatherLoading;
   const errorMessage = searchErrorMessage ?? weatherErrorMessage;
@@ -121,7 +164,7 @@ function App() {
         onCloseLocationPicker={closeLocationPicker}
       />
 
-      <main className="mx-auto max-w-[1100px] px-4 py-8 md:py-12">
+      <main className="mx-auto max-w-1100px px-4 py-8 md:py-12">
         <StatusMessage
           errorMessage={errorMessage}
           isLoading={isLoading}

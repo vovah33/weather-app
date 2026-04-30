@@ -1,5 +1,9 @@
 import type { FormEvent } from 'react';
-import type { GeocodingLocation } from '../../types/location';
+import type {
+  GeocodingLocation,
+  RemoveLocationHandler,
+  SelectLocationHandler,
+} from '../../types/location';
 import FavoritesDropdown from './FavoritesDropdown';
 
 type SearchBarProps = {
@@ -8,8 +12,8 @@ type SearchBarProps = {
   onSubmit: () => void;
   isLoading: boolean;
   favoriteLocations: GeocodingLocation[];
-  onSelectFavoriteLocation: (location: GeocodingLocation) => void;
-  onRemoveFavoriteLocation: (locationId: number) => void;
+  onSelectFavoriteLocation: SelectLocationHandler;
+  onRemoveFavoriteLocation: RemoveLocationHandler;
 };
 
 export default function SearchBar({

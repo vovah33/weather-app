@@ -1,5 +1,7 @@
 export type WeatherIconKey = 'sun' | 'cloud' | 'rain' | 'snow' | 'storm' | 'fog';
 
+export type HourlyCardStatus = 'past' | 'current' | 'future';
+
 export type HourlyForecastItem = {
   id: string;       // ISO datetime, example: 2026-04-21T13:00
   dateKey: string;  // ISO date, example: 2026-04-21

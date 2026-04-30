@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import type { GeocodingLocation } from '../../types/location';
+import type {
+  GeocodingLocation,
+  RemoveLocationHandler,
+  SelectLocationHandler,
+} from '../../types/location';
 import { formatLocationLabel } from '../../utils/formatLocationLabel';
 
 type FavoritesDropdownProps = {
   locations: GeocodingLocation[];
-  onSelectLocation: (location: GeocodingLocation) => void;
-  onRemoveLocation: (locationId: number) => void;
+  onSelectLocation: SelectLocationHandler;
+  onRemoveLocation: RemoveLocationHandler;
 };
 
 export default function FavoritesDropdown({

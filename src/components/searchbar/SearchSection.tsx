@@ -1,7 +1,11 @@
 import SearchBar from './searchbar';
 import SearchResultsPicker from './SearchResultsPicker';
 
-import type { GeocodingLocation } from '../../types/location';
+import type {
+  GeocodingLocation,
+  RemoveLocationHandler,
+  SelectLocationHandler,
+} from '../../types/location';
 
 type SearchSectionProps = {
   searchValue: string;
@@ -10,12 +14,12 @@ type SearchSectionProps = {
   isLoading: boolean;
 
   favoriteLocations: GeocodingLocation[];
-  onSelectFavoriteLocation: (location: GeocodingLocation) => void;
-  onRemoveFavoriteLocation: (locationId: number) => void;
+  onSelectFavoriteLocation: SelectLocationHandler;
+  onRemoveFavoriteLocation: RemoveLocationHandler;
 
   isLocationPickerOpen: boolean;
   locationOptions: GeocodingLocation[];
-  onSelectLocation: (location: GeocodingLocation) => void;
+  onSelectLocation: SelectLocationHandler;
   onCloseLocationPicker: () => void;
 };
 

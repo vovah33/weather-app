@@ -6,3 +6,7 @@ export type GeocodingLocation = {
   longitude: number;
   admin1?: string;
 };
+
+export type SelectLocationHandler = (location: GeocodingLocation) => void;
+
+export type RemoveLocationHandler = (locationId: number) => void;

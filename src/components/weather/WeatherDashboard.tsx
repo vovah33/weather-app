@@ -34,6 +34,8 @@ export default function WeatherDashboard({
   const currentHourIdForSelectedDay =
     selectedDayId === weatherData.todayId ? weatherData.currentHourId : null;
 
+  const hourlyForecastKey = `${selectedDayId}-${currentHourIdForSelectedDay ?? 'forecast'}`;
+
   return (
     <>
       {selectedLocation && (
@@ -60,6 +62,7 @@ export default function WeatherDashboard({
 
       {visibleHourlyForecast.length > 0 && (
         <HourlyForecast
+          key={hourlyForecastKey}
           items={visibleHourlyForecast}
           currentHourId={currentHourIdForSelectedDay}
         />

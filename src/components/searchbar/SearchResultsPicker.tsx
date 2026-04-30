@@ -1,9 +1,12 @@
-import type { GeocodingLocation } from '../../types/location';
+import type {
+  GeocodingLocation,
+  SelectLocationHandler,
+} from '../../types/location';
 import { formatLocationLabel } from '../../utils/formatLocationLabel';
 
 type SearchResultsPickerProps = {
   locations: GeocodingLocation[];
-  onSelectLocation: (location: GeocodingLocation) => void;
+  onSelectLocation: SelectLocationHandler;
   onClose: () => void;
 };
 

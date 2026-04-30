@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { searchLocations } from '../api/geocodingApi';
 import type { GeocodingLocation } from '../types/location';
 
@@ -15,41 +15,46 @@ export function useLocationSuggestions(
   selectedLocation: GeocodingLocation | null,
 ): UseLocationSuggestionsResult {
   const [locationOptions, setLocationOptions] = useState<GeocodingLocation[]>([]);
-  const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [suggestionsQuery, setSuggestionsQuery] = useState('');
 
   const suggestionsRequestIdRef = useRef(0);
 
-  function clearLocationSuggestions() {
+  const trimmedQuery = searchValue.trim();
+
+  const isSelectedLocationQuery =
+    selectedLocation !== null &&
+    trimmedQuery.toLowerCase() === selectedLocation.name.trim().toLowerCase();
+
+  const canSearchSuggestions =
+    trimmedQuery.length >= 2 && !isSelectedLocationQuery;
+
+  const clearLocationSuggestions = useCallback(() => {
     suggestionsRequestIdRef.current += 1;
     setLocationOptions([]);
-    setIsLocationPickerOpen(false);
-  }
+    setIsPickerOpen(false);
+    setSuggestionsQuery('');
+  }, []);
 
-  function closeLocationPicker() {
+  const closeLocationPicker = useCallback(() => {
     suggestionsRequestIdRef.current += 1;
-    setIsLocationPickerOpen(false);
     setLocationOptions([]);
-  }
+    setIsPickerOpen(false);
+    setSuggestionsQuery('');
+  }, []);
 
-  function showLocationOptions(locations: GeocodingLocation[]) {
-    suggestionsRequestIdRef.current += 1;
-    setLocationOptions(locations);
-    setIsLocationPickerOpen(locations.length > 0);
-  }
+  const showLocationOptions = useCallback(
+    (locations: GeocodingLocation[]) => {
+      suggestionsRequestIdRef.current += 1;
+      setLocationOptions(locations);
+      setSuggestionsQuery(searchValue.trim());
+      setIsPickerOpen(locations.length > 0);
+    },
+    [searchValue],
+  );
 
   useEffect(() => {
-    const trimmedQuery = searchValue.trim();
-
-    if (trimmedQuery.length < 2) {
-      clearLocationSuggestions();
-      return;
-    }
-
-    if (
-      selectedLocation &&
-      trimmedQuery.toLowerCase() === selectedLocation.name.trim().toLowerCase()
-    ) {
-      clearLocationSuggestions();
+    if (!canSearchSuggestions) {
       return;
     }
 
@@ -64,21 +69,29 @@ export function useLocationSuggestions(
         }
 
         setLocationOptions(locations);
-        setIsLocationPickerOpen(locations.length > 0);
+        setSuggestionsQuery(trimmedQuery);
+        setIsPickerOpen(locations.length > 0);
       } catch {
         if (requestId !== suggestionsRequestIdRef.current) {
           return;
         }
 
         setLocationOptions([]);
-        setIsLocationPickerOpen(false);
+        setSuggestionsQuery(trimmedQuery);
+        setIsPickerOpen(false);
       }
     }, 400);
 
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [searchValue, selectedLocation]);
+  }, [canSearchSuggestions, trimmedQuery]);
+
+  const isLocationPickerOpen =
+    canSearchSuggestions &&
+    isPickerOpen &&
+    suggestionsQuery === trimmedQuery &&
+    locationOptions.length > 0;
 
   return {
     locationOptions,

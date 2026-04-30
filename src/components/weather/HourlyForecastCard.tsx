@@ -5,9 +5,11 @@ import snowIcon from '../../assets/Icons/snow.png';
 import stormIcon from '../../assets/Icons/storm.png';
 import fogIcon from '../../assets/Icons/fog.png';
 
-import type { HourlyForecastItem, WeatherIconKey } from '../../types/weather';
-
-export type HourlyCardStatus = 'past' | 'current' | 'future';
+import type {
+  HourlyCardStatus,
+  HourlyForecastItem,
+  WeatherIconKey,
+} from '../../types/weather';
 
 type HourlyForecastCardProps = {
   item: HourlyForecastItem;

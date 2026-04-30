@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import type { HourlyForecastItem } from '../../types/weather';
-import HourlyForecastCard, { type HourlyCardStatus } from './HourlyForecastCard';
+import { useState } from 'react';
+import type { HourlyCardStatus, HourlyForecastItem } from '../../types/weather';
+import HourlyForecastCard from './HourlyForecastCard';
 
 type HourlyForecastProps = {
   items: HourlyForecastItem[];
@@ -49,17 +49,16 @@ export default function HourlyForecast({
   items,
   currentHourId,
 }: HourlyForecastProps) {
-  const [startIndex, setStartIndex] = useState(0);
-
-  useEffect(() => {
-    setStartIndex(getInitialStartIndex(items, currentHourId));
-  }, [items, currentHourId]);
+  const [startIndex, setStartIndex] = useState(() =>
+    getInitialStartIndex(items, currentHourId),
+  );
 
   const maxStartIndex = Math.max(items.length - ITEMS_PER_PAGE, 0);
-  const visibleItems = items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const safeStartIndex = Math.min(startIndex, maxStartIndex);
+  const visibleItems = items.slice(safeStartIndex, safeStartIndex + ITEMS_PER_PAGE);
 
-  const canGoBack = startIndex > 0;
-  const canGoForward = startIndex < maxStartIndex;
+  const canGoBack = safeStartIndex > 0;
+  const canGoForward = safeStartIndex < maxStartIndex;
 
   function handlePreviousClick() {
     setStartIndex((currentIndex) =>
