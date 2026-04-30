@@ -13,10 +13,12 @@ export default function DailyForecast({
   onSelectDay,
 }: DailyForecastProps) {
   return (
-    <section className="daily-forecast">
-      <h2 className="section-title">Next 7 days</h2>
+    <section className="text-center">
+      <h2 className="mb-6 text-3xl font-extrabold tracking-tight text-slate-950">
+        Next 7 days
+      </h2>
 
-      <div className="daily-forecast__grid">
+      <div className="grid grid-cols-8 gap-4 max-lg:grid-cols-4 max-md:grid-cols-2">
         {items.map((item) => (
           <DailyForecastCard
             key={item.id}

@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import './App.css';
 
-import SearchBar from './components/searchbar/searchbar';
-import SearchResultsPicker from './components/searchbar/SearchResultsPicker';
+import SearchSection from './components/searchbar/SearchSection';
+import StatusMessage from './components/ui/StatusMessage';
 import WeatherDashboard from './components/weather/WeatherDashboard';
 
 import { searchLocations } from './api/geocodingApi';
@@ -13,8 +12,10 @@ import { useWeatherData } from './hooks/useWeatherData';
 
 import type { GeocodingLocation } from './types/location';
 
+const DEFAULT_CITY = 'Vlaardingen';
+
 function App() {
-  const [searchValue, setSearchValue] = useState('Vlaardingen');
+  const [searchValue, setSearchValue] = useState(DEFAULT_CITY);
 
   const [isSearchingLocation, setIsSearchingLocation] = useState(false);
   const [searchErrorMessage, setSearchErrorMessage] = useState<string | null>(null);
@@ -95,47 +96,37 @@ function App() {
     void loadLocationAndSyncSearch(location);
   }
 
-  function handleSelectFavoriteLocation(location: GeocodingLocation) {
-    void loadLocationAndSyncSearch(location);
-  }
-
   useEffect(() => {
-    void loadWeatherByCity('Vlaardingen');
+    void loadWeatherByCity(DEFAULT_CITY);
   }, []);
 
   const isLoading = isSearchingLocation || isWeatherLoading;
   const errorMessage = searchErrorMessage ?? weatherErrorMessage;
 
   return (
-    <div className="app">
-      <div className="search-shell">
-        <SearchBar
-          value={searchValue}
-          onChange={setSearchValue}
-          onSubmit={() => {
-            void loadWeatherByCity(searchValue);
-          }}
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(79,172,254,0.18),transparent_34rem),linear-gradient(180deg,#eef7ff_0%,#f7fbff_45%,#edf3f8_100%)] text-slate-800">
+      <SearchSection
+        searchValue={searchValue}
+        onSearchValueChange={setSearchValue}
+        onSearchSubmit={() => {
+          void loadWeatherByCity(searchValue);
+        }}
+        isLoading={isLoading}
+        favoriteLocations={favoriteLocations}
+        onSelectFavoriteLocation={handleSelectLocation}
+        onRemoveFavoriteLocation={removeFavoriteLocation}
+        isLocationPickerOpen={isLocationPickerOpen}
+        locationOptions={locationOptions}
+        onSelectLocation={handleSelectLocation}
+        onCloseLocationPicker={closeLocationPicker}
+      />
+
+      <main className="mx-auto max-w-[1100px] px-4 py-8 md:py-12">
+        <StatusMessage
+          errorMessage={errorMessage}
           isLoading={isLoading}
-          favoriteLocations={favoriteLocations}
-          onSelectFavoriteLocation={handleSelectFavoriteLocation}
-          onRemoveFavoriteLocation={removeFavoriteLocation}
+          hasWeatherData={weatherData !== null}
         />
-
-        {isLocationPickerOpen && locationOptions.length > 0 && (
-          <SearchResultsPicker
-            locations={locationOptions}
-            onSelectLocation={handleSelectLocation}
-            onClose={closeLocationPicker}
-          />
-        )}
-      </div>
-
-      <main className="main">
-        {errorMessage && <p className="status status--error">{errorMessage}</p>}
-
-        {!weatherData && isLoading && (
-          <p className="status">Loading weather data...</p>
-        )}
 
         {weatherData && (
           <WeatherDashboard

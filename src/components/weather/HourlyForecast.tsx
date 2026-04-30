@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { HourlyForecastItem } from '../../types/weather';
-import HourlyForecastCard from './HourlyForecastCard';
+import HourlyForecastCard, { type HourlyCardStatus } from './HourlyForecastCard';
 
 type HourlyForecastProps = {
   items: HourlyForecastItem[];
@@ -8,8 +8,6 @@ type HourlyForecastProps = {
 };
 
 const ITEMS_PER_PAGE = 12;
-
-type HourlyCardStatus = 'past' | 'current' | 'future';
 
 function getHourlyCardStatus(
   item: HourlyForecastItem,
@@ -76,10 +74,13 @@ export default function HourlyForecast({
   }
 
   return (
-    <section className="hourly-forecast" aria-label="Hourly forecast">
+    <section
+      className="relative left-1/2 mb-10 grid w-[calc(100vw-2rem)] -translate-x-1/2 grid-cols-[48px_minmax(0,1100px)_48px] items-stretch justify-center gap-3 max-lg:grid-cols-[44px_minmax(0,1fr)_44px] max-md:grid-cols-[40px_minmax(0,1fr)_40px] max-md:gap-2"
+      aria-label="Hourly forecast"
+    >
       <button
         type="button"
-        className="hourly-forecast__nav-button"
+        className="flex min-h-22 cursor-pointer items-center justify-center rounded-xl border-0 bg-white/75 text-2xl text-slate-400 shadow-lg shadow-slate-900/10 transition-colors hover:bg-white hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={handlePreviousClick}
         disabled={!canGoBack}
         aria-label="Show previous hours"
@@ -87,7 +88,7 @@ export default function HourlyForecast({
         ◀
       </button>
 
-      <div className="hourly-forecast__grid">
+      <div className="grid grid-cols-12 gap-2 max-lg:grid-cols-6 max-md:grid-cols-4">
         {visibleItems.map((item) => (
           <HourlyForecastCard
             key={item.id}
@@ -99,7 +100,7 @@ export default function HourlyForecast({
 
       <button
         type="button"
-        className="hourly-forecast__nav-button"
+        className="flex min-h-22 cursor-pointer items-center justify-center rounded-xl border-0 bg-white/75 text-2xl text-slate-400 shadow-lg shadow-slate-900/10 transition-colors hover:bg-white hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={handleNextClick}
         disabled={!canGoForward}
         aria-label="Show next hours"

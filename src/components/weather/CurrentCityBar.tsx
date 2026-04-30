@@ -14,14 +14,14 @@ export default function CurrentCityBar({
   onToggleFavorite,
 }: CurrentCityBarProps) {
   return (
-    <div className="current-city">
-      <p className="current-city__text">
+    <div className="mb-5 flex items-center justify-center gap-3 text-center">
+      <p className="m-0 font-semibold text-slate-700">
         Current city: {location.name}, {location.country}
       </p>
 
       <button
         type="button"
-        className="current-city__favorite-button"
+        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-0 bg-white/75 p-1.5 shadow-md transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sky-500"
         onClick={onToggleFavorite}
         aria-label={
           isFavorite ? 'Remove city from favorites' : 'Add city to favorites'
@@ -29,7 +29,7 @@ export default function CurrentCityBar({
         title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
       >
         <img
-          className="current-city__favorite-icon"
+          className="block h-6 w-6 object-contain"
           src={isFavorite ? starFullIcon : starEmptyIcon}
           alt=""
         />

@@ -7,7 +7,7 @@ import fogIcon from '../../assets/Icons/fog.png';
 
 import type { HourlyForecastItem, WeatherIconKey } from '../../types/weather';
 
-type HourlyCardStatus = 'past' | 'current' | 'future';
+export type HourlyCardStatus = 'past' | 'current' | 'future';
 
 type HourlyForecastCardProps = {
   item: HourlyForecastItem;
@@ -23,6 +23,21 @@ const iconMap: Record<WeatherIconKey, string> = {
   fog: fogIcon,
 };
 
+function getCardClassName(status: HourlyCardStatus): string {
+  const baseClassName =
+    'relative flex min-h-22 min-w-0 flex-col items-center justify-center gap-1 rounded-2xl border p-2 text-center shadow-lg transition-transform';
+
+  if (status === 'past') {
+    return `${baseClassName} border-slate-300/70 bg-slate-300 text-slate-500`;
+  }
+
+  if (status === 'current') {
+    return `${baseClassName} z-10 -translate-y-1.5 border-amber-400 bg-white text-slate-950 shadow-xl shadow-amber-500/30 ring-4 ring-amber-400/40`;
+  }
+
+  return `${baseClassName} border-slate-300/40 bg-white/80 text-slate-800 shadow-slate-900/10 hover:-translate-y-0.5 hover:border-sky-300`;
+}
+
 export default function HourlyForecastCard({
   item,
   status,
@@ -30,16 +45,28 @@ export default function HourlyForecastCard({
   const iconSrc = iconMap[item.icon];
 
   return (
-    <article className={`forecast-card hourly-card hourly-card--${status}`}>
-      <p>{item.time}</p>
+    <article className={getCardClassName(status)}>
+      {status === 'current' && (
+        <span className="absolute -top-3 rounded-full bg-amber-400 px-2 py-0.5 text-[0.65rem] font-bold leading-none text-slate-900">
+          Now
+        </span>
+      )}
+
+      <p className="m-0 whitespace-nowrap text-xs font-semibold leading-tight">
+        {item.time}
+      </p>
 
       <img
-        className="weather-icon"
+        className={`h-7 w-7 object-contain ${
+          status === 'past' ? 'opacity-55' : ''
+        }`}
         src={iconSrc}
         alt="Weather icon"
       />
 
-      <p>{item.temperature}°C</p>
+      <p className="m-0 whitespace-nowrap text-xs font-bold leading-tight">
+        {item.temperature}°C
+      </p>
     </article>
   );
 }

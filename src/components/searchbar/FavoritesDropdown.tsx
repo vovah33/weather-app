@@ -58,26 +58,29 @@ export default function FavoritesDropdown({
   }
 
   return (
-    <div className="favorites-dropdown" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        className="favorites-dropdown__toggle"
+        className="cursor-pointer rounded-xl border-0 bg-sky-800 px-4 py-3 font-semibold text-white shadow-md transition-colors hover:bg-sky-900"
         onClick={() => setIsOpen((currentValue) => !currentValue)}
       >
         Favorites
       </button>
 
       {isOpen && (
-        <div className="favorites-dropdown__menu">
+        <div className="absolute right-0 top-[calc(100%+0.5rem)] z-30 max-h-80 w-80 overflow-y-auto rounded-2xl border border-slate-300/60 bg-white p-3 shadow-2xl shadow-slate-900/20">
           {locations.length === 0 ? (
-            <p className="favorites-dropdown__empty">No favorite cities yet.</p>
+            <p className="m-0 text-slate-500">No favorite cities yet.</p>
           ) : (
-            <ul className="favorites-dropdown__list">
+            <ul className="m-0 grid list-none gap-2 p-0">
               {locations.map((location) => (
-                <li className="favorites-dropdown__item" key={location.id}>
+                <li
+                  className="flex items-stretch overflow-hidden rounded-xl border border-slate-200 bg-slate-50"
+                  key={location.id}
+                >
                   <button
                     type="button"
-                    className="favorites-dropdown__city"
+                    className="flex-1 cursor-pointer border-0 bg-transparent px-3 py-3 text-left text-slate-800 transition-colors hover:bg-sky-50"
                     onClick={() => handleSelectLocation(location)}
                   >
                     {formatLocationLabel(location)}
@@ -85,7 +88,7 @@ export default function FavoritesDropdown({
 
                   <button
                     type="button"
-                    className="favorites-dropdown__remove"
+                    className="cursor-pointer border-0 bg-slate-200 px-3 py-3 text-slate-600 transition-colors hover:bg-red-100 hover:text-red-800"
                     onClick={() => handleRemoveLocation(location.id)}
                     aria-label={`Remove ${location.name} from favorites`}
                   >
